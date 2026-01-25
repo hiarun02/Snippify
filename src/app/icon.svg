@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Snippify icon">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6bcb" />
+      <stop offset="50%" stop-color="#ffb347" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)" />
+  <path d="M88 82c0-12 10-22 22-22h40c18 0 32 14 32 32 0 13-8 25-20 30l-34 14c-6 3-8 6-8 10 0 6 5 10 12 10h20c8 0 14 6 14 14s-6 14-14 14h-44c-18 0-32-14-32-32 0-13 8-24 20-30l36-16c6-2 8-6 8-10 0-6-4-10-12-10h-18c-8 0-14-6-14-14z" fill="#0f172a" opacity="0.9" />
+</svg>
