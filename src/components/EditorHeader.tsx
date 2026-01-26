@@ -16,17 +16,12 @@ import {Input} from "./ui/input";
 import {useFontSize} from "@/hooks/useFontSize";
 import {Label} from "./ui/label";
 import {useBackground} from "@/hooks/useBackground";
-import exportAsImage from "@/utils/exportAsImage";
 
 import {useCodePreview} from "@/hooks/useCodePreview";
-import PopupDialog from "./PopupDialog";
-import {useState} from "react";
+import exportAsImage from "@/utils/exportAsImage";
 import {Button} from "./ui/button";
 
 export default function EditorHeader() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [cloudLink] = useState<string>("");
-  const [isCopied, setIsCopied] = useState(false);
   const {gradient, setGradient} = useGradient();
   const {setTheme} = useTheme();
   const {setLanguage} = useLanguage();
@@ -45,13 +40,6 @@ export default function EditorHeader() {
     <section className="fixed top-0 w-full flex justify-center z-10">
       <div className="flex justify-center w-full">
         <div className="flex flex-col items-center w-full px-4 sm:px-10 py-4 min-h-20 rounded-b-xl bg-white text-black bg-opacity-10 backdrop-blur-lg border border-black/20 shadow-none">
-          <PopupDialog
-            setIsCopied={setIsCopied}
-            isCopied={isCopied}
-            cloudLink={cloudLink}
-            isDialogOpen={isDialogOpen}
-            setIsDialogOpen={setIsDialogOpen}
-          />
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-12 w-full">
             <div className="space-y-1">
               <Label className="text-xs" htmlFor="gradient">
