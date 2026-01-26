@@ -21,7 +21,7 @@ import {
 import {Button} from "@/components/ui/button";
 import Image from "next/image";
 
-const BUY_ME_COFFEE_URL = "buymeacoffee.com/hiarun01";
+const BUY_ME_COFFEE_URL = "https://buymeacoffee.com/hiarun01";
 const PAYPAL_URL = "https://paypal.me/hiarun01";
 const UPI_ID = "hey.arunkumar@axl";
 
