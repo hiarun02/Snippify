@@ -3,8 +3,7 @@ import {Inter} from "next/font/google";
 import Header from "@/components/Footer";
 import {Analytics} from "@vercel/analytics/react";
 import {Toaster} from "sonner";
-
-import "./globals.css";
+import "@/styles/globals.css";
 import Providers from "@/provider/Providers";
 
 const inter = Inter({

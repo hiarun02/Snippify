@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {AiFillStar, AiFillGithub} from "react-icons/ai";
 import {Button} from "./ui/button";
 
-export default function Header() {
+export default function Footer() {
   const [stars, setStars] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 

@@ -18,7 +18,7 @@ import {Label} from "./ui/label";
 import {useBackground} from "@/hooks/useBackground";
 
 import {useCodePreview} from "@/hooks/useCodePreview";
-import exportAsImage from "@/utils/exportAsImage";
+import exportAsImage from "@/utils/DownloadImage";
 import {Button} from "./ui/button";
 
 export default function EditorHeader() {
