@@ -66,8 +66,8 @@ export default function EditorHeader() {
   return (
     <section className="fixed top-0 w-full flex justify-center z-10">
       <div className="flex justify-center w-full">
-        <div className="flex flex-col items-center w-full px-4 sm:px-10 py-4 min-h-20 rounded-b-xl bg-white text-black bg-opacity-10 backdrop-blur-lg border border-black/20 shadow-none">
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-12 w-full">
+        <div className="flex flex-col items-center w-full px-2 sm:px-10 py-2 sm:py-4 min-h-auto sm:min-h-20 rounded-b-xl bg-white text-black bg-opacity-10 backdrop-blur-lg border border-black/20 shadow-none">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-12 w-full">
             <div className="space-y-1">
               <Label className="text-xs" htmlFor="gradient">
                 Gradient
