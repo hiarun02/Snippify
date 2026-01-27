@@ -1,13 +1,10 @@
-# Snippify 🎨
+# Snippify
 
 A modern code snippet generator that transforms your code into beautiful, shareable images with customizable themes, gradients, and styling options.
 
-![Snippify Demo](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
-![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=flat-square&logo=tailwind-css)
+<img width="2400" height="1350" alt="stage-1769500654932" src="https://github.com/user-attachments/assets/442499d9-4862-4c10-beb0-c9a1659ceec2" />
 
-## ✨ Features
-
+## Features
 - 22+ Professional Themes
 - 22+ Beautiful Gradients
 - Multiple Languages Support (JavaScript, Python, HTML, CSS, Java, Rust, Go, C++, TypeScript)
@@ -16,15 +13,14 @@ A modern code snippet generator that transforms your code into beautiful, sharea
 - Toggle Background On/Off
 - Real-time Preview
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **React 19** + **Next.js 14** - Frontend framework
+- ****Next.js 14** - Frontend framework
 - **Tailwind CSS 4** - Styling
 - **React Syntax Highlighter** - Code highlighting
-- **Radix UI** - Components
-- **Lucide React** - Icons
+- **Shadcn Ui** - Components
 
-## 🛠️ Installation
+## Installation
 
 ### Prerequisites
 
@@ -55,7 +51,7 @@ npm run dev
 4. **Open in browser**
    Navigate to `http://localhost:3000`
 
-## 📖 Usage
+## Usage
 
 1. **Select Options**
    - Choose gradient, theme, language, and font size from the header
@@ -75,7 +71,7 @@ npm run dev
    - Click "Download" to export as PNG
    - Share your beautifully formatted code!
 
-## 🎯 Supported Languages
+## Supported Languages
 
 - JavaScript
 - Python
@@ -137,16 +133,6 @@ Thanks to all our amazing contributors! Check out the [Contributors page](https:
 ## 👨‍💻 Creator
 
 **Arun Kumar** ([@hiarun02](https://x.com/hiarun02))
-
-- GitHub: [@hiarun02](https://github.com/hiarun02)
-- Twitter: [@hiarun02](https://x.com/hiarun02)
-
-## 🙏 Acknowledgments
-
-- [React Syntax Highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) for amazing syntax highlighting
-- [Radix UI](https://www.radix-ui.com/) for accessible components
-- [Tailwind CSS](https://tailwindcss.com/) for utility-first CSS
-- [Lucide React](https://lucide.dev/) for beautiful icons
 
 ## 📞 Support
 
