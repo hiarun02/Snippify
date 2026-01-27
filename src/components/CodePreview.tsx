@@ -23,7 +23,7 @@ export default function CodePreview({code}: CodePreviewProps) {
   return (
     <div
       ref={setPreviewRef}
-      className={`w-fit min-w-[20vw] max-sm:w-full py-8 px-10 max-sm:py-6 max-sm:px-4 rounded-xl ${
+      className={`w-fit min-w-[20vw] max-sm:w-full max-sm:mx-auto py-6 px-10 max-sm:py-4 max-sm:px-4 rounded-xl ${
         isBackgroundHidden ? "!bg-none shadow-none" : ""
       }`}
       style={{background: gradient}}
