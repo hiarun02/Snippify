@@ -64,7 +64,7 @@ export default function SupportDialog({children}: SupportDialogProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-[calc(100vw-2rem)] border-gray-200 bg-white p-4 text-gray-900 sm:max-w-3xl sm:p-6">
+      <DialogContent className="max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] overflow-y-auto border-gray-200 bg-white p-4 text-gray-900 sm:max-w-3xl sm:p-6">
         <DialogHeader className="gap-1">
           <DialogTitle className="text-2xl font-bold text-gray-900">
             Support Snippify
