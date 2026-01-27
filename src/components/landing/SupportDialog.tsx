@@ -64,7 +64,7 @@ export default function SupportDialog({children}: SupportDialogProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-3xl border-gray-200 bg-white text-gray-900">
+      <DialogContent className="max-w-[calc(100vw-2rem)] border-gray-200 bg-white p-4 text-gray-900 sm:max-w-3xl sm:p-6">
         <DialogHeader className="gap-1">
           <DialogTitle className="text-2xl font-bold text-gray-900">
             Support Snippify
@@ -121,8 +121,8 @@ export default function SupportDialog({children}: SupportDialogProps) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 shadow-sm">
-          <div className="flex items-center justify-between gap-3">
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
                 <FaMobileAlt />
@@ -135,7 +135,7 @@ export default function SupportDialog({children}: SupportDialogProps) {
             <Button
               size="sm"
               variant="ghost"
-              className="gap-2 text-sm text-gray-700"
+              className="w-full gap-2 text-sm text-gray-700 sm:w-auto"
               onClick={handleCopy}
             >
               {copied ? (
@@ -157,11 +157,11 @@ export default function SupportDialog({children}: SupportDialogProps) {
                 alt="UPI QR"
                 width={192}
                 height={192}
-                className="mx-auto h-48 w-48 object-contain"
+                className="mx-auto h-40 w-40 object-contain sm:h-48 sm:w-48"
                 unoptimized
               />
             </div>
-            <div className="space-y-2 rounded-lg bg-white/70 p-4 text-sm text-gray-700">
+            <div className="space-y-2 rounded-lg bg-white/70 p-4 text-center text-sm text-gray-700 sm:text-left">
               <p className="font-semibold text-gray-900">{UPI_ID}</p>
               <p>Scan with any UPI app or paste the ID above.</p>
             </div>
