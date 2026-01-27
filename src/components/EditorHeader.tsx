@@ -9,7 +9,7 @@ import {
   SelectTrigger,
 } from "./ui/select";
 import {gradientArray} from "@/constants/gradient";
-import {themes} from "@/lib/theme";
+import {themes, type ThemeName} from "@/lib/theme";
 import {Input} from "./ui/input";
 import {Label} from "./ui/label";
 import exportAsImage from "@/utils/DownloadImage";
@@ -149,7 +149,7 @@ export default function EditorHeader() {
               </Label>
               <Select
                 onValueChange={(value: string) => {
-                  setTheme(themes[value]);
+                  setTheme(themes[value as ThemeName]);
                 }}
               >
                 <SelectTrigger className="w-28 h-6 text-xs text-center border-black">
