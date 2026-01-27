@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
+import {Analytics} from "@vercel/analytics/next";
 
 import "@/styles/globals.css";
 import Providers from "@/provider/Providers";
@@ -24,13 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Providers>
-        <body
-          className={`${inter.className} bg-gray-100 min-h-screen overflow-x-hidden overflow-y-auto`}
-        >
-          {children}
-        </body>
-      </Providers>
+      <body
+        className={`${inter.className} bg-gray-100 min-h-screen overflow-x-hidden overflow-y-auto`}
+      >
+        <Providers>{children}</Providers>
+        <Analytics />
+      </body>
     </html>
   );
 }
