@@ -51,10 +51,10 @@ const FeturesSection = () => {
   return (
     <div className="w-full max-w-6xl mt-10 space-y-8">
       <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
           Everything you need to create stunning code visuals
         </h2>
-        <p className="mt-3 text-lg text-gray-600">
+        <p className="mt-3 text-lg text-gray-600 dark:text-gray-300">
           Professional grade features, zero learning curve. Get started in
           seconds.
         </p>
@@ -64,14 +64,16 @@ const FeturesSection = () => {
         {highlights.map((item) => (
           <div
             key={item.title}
-            className="group relative flex flex-col items-start gap-3 rounded-2xl border bg-white/70 p-6 text-left shadow-sm backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+            className="group relative flex flex-col items-start gap-3 rounded-2xl border bg-white/70 p-6 text-left shadow-sm backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl dark:border-white/10 dark:bg-gray-900/60"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-white to-gray-50 text-2xl shadow-md backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
               {item.icon}
             </div>
             <div className="space-y-1">
-              <p className="text-lg font-bold text-gray-900">{item.title}</p>
-              <p className="text-sm leading-relaxed text-gray-600">
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                {item.title}
+              </p>
+              <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                 {item.description}
               </p>
             </div>
