@@ -22,7 +22,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {useEditorStore} from "@/store/useEditorStore";
-import exportAsImage, {type ImageExportFormat} from "@/utils/DownloadImage";
+import exportAsImage, {
+  type ImageExportFormat,
+  type ImageExportResolution,
+} from "@/utils/DownloadImage";
 import {
   copyNodeAsImage,
   saveNodeAsPng,
@@ -45,6 +48,8 @@ export default function EditorPageClient() {
   >("idle");
   const [screenshotExportFormat, setScreenshotExportFormat] =
     useState<ImageExportFormat>("png");
+  const [screenshotExportResolution, setScreenshotExportResolution] =
+    useState<ImageExportResolution>("4k");
   const editorMode = useEditorStore((state) => state.editorMode);
   const setEditorMode = useEditorStore((state) => state.setEditorMode);
   const hydrateFromStorage = useEditorStore(
@@ -141,6 +146,8 @@ export default function EditorPageClient() {
       previewRef,
       {
         format: screenshotExportFormat,
+        filename: `snippify-screenshot-${screenshotExportResolution}.${screenshotExportFormat}`,
+        resolution: screenshotExportResolution,
       },
       () => {
         setIsExporting(true);
@@ -339,6 +346,34 @@ export default function EditorPageClient() {
                       <SelectItem value="png">PNG</SelectItem>
                       <SelectItem value="jpg">JPG</SelectItem>
                       <SelectItem value="webp">WebP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label
+                    htmlFor="top-screenshot-resolution"
+                    className="text-xs text-gray-300"
+                  >
+                    Resolution
+                  </Label>
+                  <Select
+                    value={screenshotExportResolution}
+                    onValueChange={(value: ImageExportResolution) =>
+                      setScreenshotExportResolution(value)
+                    }
+                  >
+                    <SelectTrigger
+                      id="top-screenshot-resolution"
+                      className="h-9 border-white/15 bg-[#111010]/80 text-sm text-gray-100"
+                    >
+                      <SelectValue placeholder="4K" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="auto">Auto</SelectItem>
+                      <SelectItem value="2k">2K</SelectItem>
+                      <SelectItem value="4k">4K</SelectItem>
+                      <SelectItem value="6k">6K</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

@@ -48,19 +48,35 @@ export default function LandingFooter() {
             })}
           </nav>
 
-          <a
-            href="https://twelve.tools"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Featured on Twelve Tools"
-          >
-            <img
-              src="https://twelve.tools/badge0-white.svg"
-              alt="Featured on Twelve Tools"
-              width="148"
-              height="40"
-            />
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <a
+              href="https://www.scrolllaunch.com/products/snippify?ref=badge"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Snippify - Featured on ScrollLaunch"
+            >
+              <img
+                src="https://www.scrolllaunch.com/api/badge/snippify?variant=launched&theme=light"
+                alt="Snippify - Featured on ScrollLaunch"
+                className="h-8 w-auto"
+              />
+            </a>
+
+            <a
+              href="https://twelve.tools/snippify-live"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Featured on Twelve Tools"
+            >
+              <img
+                src="https://twelve.tools/badge0-white.svg"
+                alt="Featured on Twelve Tools"
+                width="148"
+                height="40"
+                className="h-8 w-auto"
+              />
+            </a>
+          </div>
 
           <div className="text-xs text-gray-500 dark:text-gray-400">
             Built by{" "}
