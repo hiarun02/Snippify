@@ -15,6 +15,8 @@ interface BackgroundSelectProps {
   id: string;
   value: string;
   onChange: (value: string) => void;
+  blurValue?: number;
+  onBlurChange?: (value: number) => void;
 }
 
 const CATEGORY_DISPLAY_ORDER = [
@@ -54,6 +56,8 @@ export default function BackgroundSelect({
   id,
   value,
   onChange,
+  blurValue,
+  onBlurChange,
 }: BackgroundSelectProps) {
   const sortedCategories = useMemo(sortBackgroundCategories, []);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -63,6 +67,8 @@ export default function BackgroundSelect({
   const [isFixedDropdown, setIsFixedDropdown] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
   const [uploadError, setUploadError] = useState("");
+  const hasBlurControl = typeof blurValue === "number" && Boolean(onBlurChange);
+  const safeBlurValue = Math.max(0, Math.min(24, blurValue ?? 0));
 
   useEffect(() => {
     if (!isOpen || !containerRef.current) {
@@ -225,6 +231,33 @@ export default function BackgroundSelect({
                 </p>
               ) : null}
             </div>
+
+            {hasBlurControl ? (
+              <div className="border-t border-black/10 pb-3 pt-3 dark:border-white/10">
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
+                    BG Blur
+                  </div>
+                  <div className="text-[11px] tabular-nums text-gray-500 dark:text-gray-400">
+                    {safeBlurValue}px
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={24}
+                  step={1}
+                  value={safeBlurValue}
+                  aria-label="Background blur"
+                  onChange={(event) => {
+                    onBlurChange?.(
+                      Math.max(0, Math.min(24, Number(event.target.value) || 0)),
+                    );
+                  }}
+                  className="h-1.5 w-full accent-gray-950 dark:accent-gray-100"
+                />
+              </div>
+            ) : null}
 
             {sortedCategories.map((category) => (
               <div key={category.id} className="pb-3 last:pb-0">

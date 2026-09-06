@@ -20,6 +20,12 @@ export type ScreenshotAspectRatio =
 export type ScreenshotLayoutPreset = LayoutPresetId;
 export type EditorMode = "code" | "screenshot";
 export type CodeWindowStyle = "plain" | "macos" | "windows";
+export type ScreenshotBrowserStyle =
+  | "none"
+  | "safari"
+  | "safari-dark"
+  | "chrome"
+  | "chrome-dark";
 
 export interface ScreenshotSettings {
   borderStyle: "sharp" | "curved" | "round";
@@ -37,9 +43,8 @@ export interface ScreenshotSettings {
     | "border"
     | "border-dark"
     | "dashed"
-    | "dotted"
-    | "long-dash"
-    | "guide";
+    | "dotted";
+  browserStyle: ScreenshotBrowserStyle;
 }
 
 type ScreenshotFrameStyle = ScreenshotSettings["frameStyle"];
@@ -158,6 +163,7 @@ const DEFAULT_SCREENSHOT_SETTINGS: ScreenshotSettings = {
   layoutPreset: DEFAULT_LAYOUT_PRESET,
   aspectRatio: "16:9",
   frameStyle: "glass-light",
+  browserStyle: "none",
 };
 
 const isValidLayoutPreset = (
@@ -182,14 +188,26 @@ const normalizeFrameStyle = (value: unknown): ScreenshotFrameStyle => {
     value === "border" ||
     value === "border-dark" ||
     value === "dashed" ||
-    value === "dotted" ||
-    value === "long-dash" ||
-    value === "guide"
+    value === "dotted"
   ) {
     return value;
   }
 
   return DEFAULT_SCREENSHOT_SETTINGS.frameStyle;
+};
+
+const normalizeBrowserStyle = (value: unknown): ScreenshotBrowserStyle => {
+  if (
+    value === "none" ||
+    value === "safari" ||
+    value === "safari-dark" ||
+    value === "chrome" ||
+    value === "chrome-dark"
+  ) {
+    return value;
+  }
+
+  return DEFAULT_SCREENSHOT_SETTINGS.browserStyle;
 };
 
 const normalizeScreenshotSettings = (
@@ -228,6 +246,9 @@ const normalizeScreenshotSettings = (
       ? Math.max(0, Math.min(24, rawBackgroundBlur))
       : DEFAULT_SCREENSHOT_SETTINGS.backgroundBlur,
     frameStyle: normalizeFrameStyle(settings?.frameStyle),
+    browserStyle: normalizeBrowserStyle(
+      settings?.browserStyle ?? settings?.frameStyle,
+    ),
     layoutPreset: (() => {
       const rawLayout = settings?.layoutPreset;
       if (isValidLayoutPreset(rawLayout)) {

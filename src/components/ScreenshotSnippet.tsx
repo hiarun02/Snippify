@@ -7,9 +7,11 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import {Camera, Globe2, Loader2, UploadCloud} from "lucide-react";
 import {useDropzone, type FileRejection} from "react-dropzone";
 import {
   useEditorStore,
+  type ScreenshotBrowserStyle,
   type ScreenshotAspectRatio,
   type ScreenshotSettings,
 } from "@/store/useEditorStore";
@@ -49,6 +51,55 @@ const ASPECT_RATIO_NUMBER_MAP: Record<ScreenshotAspectRatio, number> = {
 const BACKGROUND_PADDING = "clamp(16px, 4.5vw, 64px)";
 const MAX_PREVIEW_WIDTH_PX = 1200;
 const MAX_IMAGE_SIZE_BYTES = 12 * 1024 * 1024;
+const BROWSER_FRAME_STYLES: Record<
+  Exclude<ScreenshotBrowserStyle, "none">,
+  {
+    shell: string;
+    topBar: string;
+    address: string;
+    addressText: string;
+    border: string;
+    icon: string;
+    separator: string;
+  }
+> = {
+  safari: {
+    shell: "transparent",
+    topBar: "linear-gradient(180deg, rgb(246, 247, 249), rgb(214, 218, 225))",
+    address: "rgba(255, 255, 255, 0.9)",
+    addressText: "rgba(48, 54, 64, 0.62)",
+    border: "1px solid rgba(15, 23, 42, 0.1)",
+    icon: "rgba(75, 85, 99, 0.58)",
+    separator: "rgba(15, 23, 42, 0.08)",
+  },
+  "safari-dark": {
+    shell: "rgb(17, 17, 18)",
+    topBar: "rgb(50, 50, 52)",
+    address: "rgba(255, 255, 255, 0.08)",
+    addressText: "rgba(255, 255, 255, 0.56)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    icon: "rgba(255, 255, 255, 0.48)",
+    separator: "rgba(255, 255, 255, 0.09)",
+  },
+  chrome: {
+    shell: "transparent",
+    topBar: "linear-gradient(180deg, rgb(246, 247, 249), rgb(221, 224, 230))",
+    address: "rgba(241, 243, 244, 0.95)",
+    addressText: "rgba(60, 64, 67, 0.64)",
+    border: "1px solid rgba(15, 23, 42, 0.1)",
+    icon: "rgba(75, 85, 99, 0.62)",
+    separator: "rgba(15, 23, 42, 0.08)",
+  },
+  "chrome-dark": {
+    shell: "rgb(16, 16, 17)",
+    topBar: "rgb(51, 51, 53)",
+    address: "rgba(255, 255, 255, 0.07)",
+    addressText: "rgba(255, 255, 255, 0.55)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    icon: "rgba(255, 255, 255, 0.5)",
+    separator: "rgba(255, 255, 255, 0.1)",
+  },
+};
 
 export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
   const gradient = useEditorStore((state) => state.screenshotGradient);
@@ -77,15 +128,23 @@ export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
     ASPECT_RATIO_NUMBER_MAP["16:9"];
 
   const borderRadius = Math.max(0, Math.min(64, settings.cornerRadius));
-  const hasVisibleFrame = settings.frameStyle !== "default";
   const isSolidBorderFrame =
     settings.frameStyle === "border" || settings.frameStyle === "border-dark";
+  const browserFrameStyle =
+    settings.browserStyle !== "none"
+      ? BROWSER_FRAME_STYLES[settings.browserStyle]
+      : null;
+  const hasBrowserFrame = Boolean(browserFrameStyle);
+  const hasVisibleFrame =
+    settings.frameStyle !== "default" && !hasBrowserFrame;
   const safeBorderWidthPx = Math.max(0, Math.min(settings.borderWidth, 24));
   const solidBorderWidthPx = isSolidBorderFrame ? safeBorderWidthPx : 0;
   const frameInsetWidthPx = hasVisibleFrame ? safeBorderWidthPx : 0;
-  const frameRadius = hasVisibleFrame
-    ? borderRadius + frameInsetWidthPx
-    : borderRadius;
+  const frameRadius = hasBrowserFrame
+    ? 0
+    : hasVisibleFrame
+      ? borderRadius + frameInsetWidthPx
+      : borderRadius;
 
   const getFrameStyles = () => {
     return {
@@ -134,22 +193,6 @@ export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
           border: `${safeBorderWidthPx}px dotted rgba(255, 255, 255, 0.58)`,
           backgroundColor: "transparent",
         };
-      case "long-dash":
-        return {
-          padding: "0px",
-          border: `${safeBorderWidthPx}px dashed rgba(226, 232, 240, 0.68)`,
-          backgroundColor: "transparent",
-          outline: "1px solid rgba(15, 23, 42, 0.2)",
-          outlineOffset: `${Math.max(4, safeBorderWidthPx + 2)}px`,
-        };
-      case "guide":
-        return {
-          padding: "0px",
-          border: `${Math.max(1, safeBorderWidthPx)}px dashed rgba(148, 163, 184, 0.82)`,
-          backgroundColor: "transparent",
-          boxShadow:
-            "0 0 0 6px rgba(15, 23, 42, 0.16), 0 0 0 7px rgba(226, 232, 240, 0.36)",
-        };
       case "default":
       default:
         return {
@@ -195,8 +238,6 @@ export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
       case "glass-dark":
       case "dashed":
       case "dotted":
-      case "long-dash":
-      case "guide":
         return safeBorderWidthPx;
       case "border":
       case "border-dark":
@@ -230,6 +271,8 @@ export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
     hasVisibleFrame
       ? borderRadius
       : Math.max(borderRadius - frameBorderWidthPx, 0);
+  const browserShellRadius = hasBrowserFrame ? borderRadius : 0;
+  const browserToolbarHeight = "clamp(18px, 3.1vw, 28px)";
 
   const processUploadedFile = useCallback(
     (file: File | null | undefined) => {
@@ -468,7 +511,118 @@ export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
               overflow: imageSrc ? "visible" : "hidden",
             }}
           >
-            {imageSrc ? (
+            {imageSrc && hasBrowserFrame && browserFrameStyle ? (
+              <div
+                className="flex max-h-full max-w-full flex-col overflow-hidden"
+                data-layout-effect="true"
+                data-layout-preset={settings.layoutPreset}
+                data-image-scale={safeImageScale}
+                data-shadow-style={settings.shadowStyle}
+                data-frame-style={settings.browserStyle}
+                style={{
+                  backgroundColor: browserFrameStyle.shell,
+                  border: browserFrameStyle.border,
+                  borderRadius: `${browserShellRadius}px`,
+                  boxSizing: "border-box",
+                  ...getLayoutPresetStyles(),
+                  ...getScreenshotShadowStyles(),
+                }}
+              >
+                <div
+                  aria-hidden="true"
+                  className="relative shrink-0"
+                  style={{
+                    background: browserFrameStyle.topBar,
+                    borderBottom: `1px solid ${browserFrameStyle.separator}`,
+                    height: browserToolbarHeight,
+                  }}
+                >
+                  <div className="absolute left-2.5 top-1/2 flex -translate-y-1/2 gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
+                    <span className="h-2 w-2 rounded-full bg-[#ffbd2e]" />
+                    <span className="h-2 w-2 rounded-full bg-[#28c840]" />
+                  </div>
+
+                  <div className="absolute left-14 top-1/2 flex -translate-y-1/2 items-center gap-2">
+                    <span
+                      className="h-2.5 w-px"
+                      style={{backgroundColor: browserFrameStyle.separator}}
+                    />
+                    <span
+                      className="h-2 w-2 rounded-[2px] border"
+                      style={{borderColor: browserFrameStyle.icon}}
+                    />
+                    <span
+                      className="text-[8px] leading-none"
+                      style={{color: browserFrameStyle.icon}}
+                    >
+                      {"<"}
+                    </span>
+                    <span
+                      className="text-[8px] leading-none"
+                      style={{color: browserFrameStyle.icon}}
+                    >
+                      {">"}
+                    </span>
+                  </div>
+
+                  <div
+                    className="absolute left-[30%] top-1/2 z-10 -translate-y-1/2 rounded-full"
+                    style={{
+                      backgroundColor: browserFrameStyle.address,
+                      border: `1px solid ${browserFrameStyle.separator}`,
+                      height: "clamp(10px, 1.7vw, 16px)",
+                      width: "42%",
+                    }}
+                  >
+                    <span
+                      className="absolute left-3 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full"
+                      style={{backgroundColor: browserFrameStyle.addressText}}
+                    />
+                  </div>
+
+                  <div className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-2">
+                    <span
+                      className="h-2 w-2 rounded-sm border"
+                      style={{borderColor: browserFrameStyle.icon}}
+                    />
+                    <span
+                      className="h-2 w-2 rounded-sm border"
+                      style={{borderColor: browserFrameStyle.icon}}
+                    />
+                    <span
+                      className="h-2 w-2 rounded-full border"
+                      style={{borderColor: browserFrameStyle.icon}}
+                    />
+                  </div>
+                </div>
+
+                <div
+                  className="min-h-0 overflow-hidden"
+                  style={{
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imageSrc}
+                    alt="Screenshot preview"
+                    className="block"
+                    style={{
+                      borderRadius: "0px",
+                      boxSizing: "border-box",
+                      height: "auto",
+                      imageRendering: "auto",
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      objectPosition: "center",
+                      width: "auto",
+                    }}
+                  />
+                </div>
+              </div>
+            ) : imageSrc ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -507,67 +661,81 @@ export default function ScreenshotSnippet({settings}: ScreenshotSnippetProps) {
               >
                 <div
                   data-export-ignore="true"
-                  className={`relative z-10 flex w-[78%] max-w-[340px] flex-col items-center rounded-xl border px-3 py-1.5 text-center text-white shadow-[0_18px_50px_rgba(0,0,0,0.32)] backdrop-blur-2xl transition-all duration-200 sm:max-h-[calc(100%-4px)] sm:w-[88%] sm:max-w-[560px] sm:overflow-hidden sm:rounded-2xl sm:px-7 sm:py-5 ${
-                    isDragActive
-                      ? "scale-[1.01] border-cyan-200/80 bg-white/25"
-                      : "border-white/25 bg-black/35"
+                  className={`relative z-10 flex w-[88%] max-w-[430px] flex-col items-center text-center text-white transition-all duration-200 sm:w-[86%] ${
+                    isDragActive ? "scale-[1.01]" : ""
                   }`}
                 >
                   <button
                     type="button"
                     onClick={open}
                     aria-label="Choose screenshot file"
-                    className="mb-4 hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/40 bg-white/15 text-4xl font-semibold leading-none text-white/95 shadow-inner transition hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/60 sm:inline-flex"
+                    className="relative flex h-8 w-8 items-center justify-center rounded-lg text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.72)] transition hover:-translate-y-0.5 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 sm:h-11 sm:w-11 sm:rounded-xl"
                   >
-                    +
+                    <UploadCloud className="h-6 w-6 stroke-[1.8] sm:h-8 sm:w-8" />
                   </button>
 
-                  <p className="text-[13px] font-semibold leading-4 tracking-tight text-white/95 sm:text-xl sm:leading-normal">
-                    {isDragActive ? "Drop image here" : "Add screenshot"}
-                  </p>
-                  <p className="mt-0.5 max-w-[230px] text-[10px] leading-3 text-white/80 sm:mt-1 sm:max-w-none sm:text-sm sm:leading-5">
-                    Drop an image, paste one, browse, or capture a website.
+                  <p
+                    className="relative mt-1 text-[11px] font-bold leading-4 text-white sm:mt-2 sm:text-base sm:leading-6"
+                    style={{textShadow: "0 2px 8px rgba(0,0,0,0.78)"}}
+                  >
+                    {isDragActive
+                      ? "Drop image here"
+                      : "Drag and drop, click to browse, or paste"}
                   </p>
 
+                  <div className="relative mt-1.5 flex items-center gap-1.5 rounded-md bg-white/8 px-2 py-1 text-[10px] font-medium text-white/70 backdrop-blur-md sm:mt-2.5 sm:px-2.5 sm:py-1.5 sm:text-[11px]">
+                    <span className="rounded bg-white/10 px-1.5 py-0.5 font-semibold leading-none text-white/90">
+                      Cmd V
+                    </span>
+                    <span>to paste</span>
+                  </div>
+
+                  <div className="relative my-2 flex w-full max-w-[130px] items-center gap-2 text-[10px] font-medium text-white sm:my-4 sm:max-w-[180px] sm:gap-3 sm:text-[11px]">
+                    <span className="h-px flex-1 bg-white/34" />
+                    <span>or</span>
+                    <span className="h-px flex-1 bg-white/34" />
+                  </div>
+
                   <form
-                    className="mt-1 flex w-full flex-col gap-1 sm:mt-4 sm:gap-2 sm:flex-row"
+                    className="relative flex w-full max-w-[320px] items-center gap-2 sm:max-w-[390px] sm:gap-2.5"
                     onSubmit={handleWebsiteCapture}
                     onClick={(event) => event.stopPropagation()}
                   >
-                    <input
-                      type="text"
-                      inputMode="url"
-                      value={websiteUrl}
-                      onChange={(event) => {
-                        setWebsiteUrl(event.target.value);
-                        setWebsiteCaptureError("");
-                      }}
-                      placeholder="https://example.com"
-                      aria-label="Website URL"
-                      className="box-border h-6 min-h-6 min-w-0 flex-1 appearance-none rounded-md border border-white/25 bg-black/25 px-2.5 py-0 text-[11px] leading-none text-white outline-none placeholder:text-white/45 focus:border-white/60 focus:ring-2 focus:ring-white/20 sm:h-9 sm:min-h-9 sm:rounded-lg sm:px-3 sm:text-sm"
-                    />
+                    <div className="flex h-8 min-w-0 flex-1 items-center rounded-lg border border-foreground/20 bg-background/45 px-2.5 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_14px_34px_rgba(0,0,0,0.28)] backdrop-blur-xl transition focus-within:border-foreground/40 focus-within:bg-background/58 focus-within:ring-1 focus-within:ring-foreground/20 sm:h-10 sm:rounded-xl sm:px-3">
+                      <Globe2 className="mr-1.5 h-3.5 w-3.5 shrink-0 text-foreground/55 sm:mr-2 sm:h-4 sm:w-4" />
+                      <input
+                        type="text"
+                        inputMode="url"
+                        value={websiteUrl}
+                        onChange={(event) => {
+                          setWebsiteUrl(event.target.value);
+                          setWebsiteCaptureError("");
+                        }}
+                        placeholder="Enter website URL..."
+                        aria-label="Website URL"
+                        className="min-w-0 flex-1 bg-transparent text-xs font-medium text-foreground/90 outline-none placeholder:text-foreground/42 sm:text-sm"
+                      />
+                    </div>
+
                     <button
                       type="submit"
                       disabled={isCapturingWebsite}
-                      className="box-border h-6 min-h-6 rounded-md border border-white/30 bg-white/15 px-3 py-0 text-[11px] font-semibold leading-none text-white transition hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-60 sm:h-9 sm:min-h-9 sm:rounded-lg sm:px-4 sm:text-sm"
+                      aria-label="Capture website screenshot"
+                      className="flex h-8 w-9 shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-background/45 text-foreground/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_14px_34px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:border-foreground/35 hover:bg-background/58 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 sm:h-10 sm:w-11 sm:rounded-xl"
                     >
-                      {isCapturingWebsite ? "Capturing..." : "Capture"}
+                      {isCapturingWebsite ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin sm:h-4 sm:w-4" />
+                      ) : (
+                        <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      )}
                     </button>
                   </form>
 
                   {websiteCaptureError ? (
-                    <p className="mt-2 text-xs font-medium text-red-100">
+                    <p className="mt-4 rounded-md border border-red-500/40 bg-black/45 px-3 py-2 text-sm font-medium text-red-300 shadow-[0_12px_34px_rgba(0,0,0,0.24)] backdrop-blur-xl">
                       {websiteCaptureError}
                     </p>
                   ) : null}
-
-                  <button
-                    type="button"
-                    onClick={open}
-                    className="mt-1 inline-flex h-5 shrink-0 items-center rounded-md border border-white/30 bg-white/10 px-3 text-[10px] font-medium text-white/95 transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60 sm:hidden"
-                  >
-                    Choose file
-                  </button>
                 </div>
               </div>
             )}

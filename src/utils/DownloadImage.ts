@@ -6,10 +6,12 @@ import {
 } from "@/constants/layoutPresets";
 
 export type ImageExportFormat = "png" | "jpg" | "webp";
+export type ImageExportResolution = "auto" | "2k" | "4k" | "6k";
 
 interface ExportImageOptions {
   format?: ImageExportFormat;
   filename?: string;
+  resolution?: ImageExportResolution;
 }
 
 function getMimeType(format: ImageExportFormat) {
@@ -33,6 +35,23 @@ function getFormatQuality(format: ImageExportFormat) {
 }
 
 const EXPORT_PIXEL_RATIO = 3;
+
+const EXPORT_RESOLUTION_WIDTHS: Record<
+  Exclude<ImageExportResolution, "auto">,
+  number
+> = {
+  "2k": 2048,
+  "4k": 4096,
+  "6k": 6144,
+};
+
+function getExportScale(width: number, resolution?: ImageExportResolution) {
+  if (resolution && resolution !== "auto") {
+    return Math.max(1, EXPORT_RESOLUTION_WIDTHS[resolution] / width);
+  }
+
+  return Math.max(EXPORT_PIXEL_RATIO, window.devicePixelRatio || 1);
+}
 
 function triggerBrowserDownload(url: string, filename: string) {
   const link = document.createElement("a");
@@ -192,11 +211,15 @@ function createSanitizedClone(node: HTMLElement, applyLayoutFallback = false) {
   };
 }
 
-async function captureCanvas(node: HTMLElement) {
+async function captureCanvas(
+  node: HTMLElement,
+  resolution?: ImageExportResolution,
+) {
   const html2canvas = (await import("html2canvas")).default;
   const rect = node.getBoundingClientRect();
   const width = Math.max(1, Math.round(rect.width));
   const height = Math.max(1, Math.round(rect.height));
+  const scale = getExportScale(width, resolution);
 
   return await html2canvas(node, {
     backgroundColor: null,
@@ -204,7 +227,7 @@ async function captureCanvas(node: HTMLElement) {
     height,
     useCORS: true,
     allowTaint: true,
-    scale: EXPORT_PIXEL_RATIO,
+    scale,
     logging: false,
     removeContainer: true,
     ignoreElements: (el) =>
@@ -212,17 +235,21 @@ async function captureCanvas(node: HTMLElement) {
   });
 }
 
-async function captureCanvasWithHtmlToImage(node: HTMLElement) {
+async function captureCanvasWithHtmlToImage(
+  node: HTMLElement,
+  resolution?: ImageExportResolution,
+) {
   const {toCanvas} = await import("html-to-image");
   const rect = node.getBoundingClientRect();
   const width = Math.max(1, Math.round(rect.width));
   const height = Math.max(1, Math.round(rect.height));
+  const scale = getExportScale(width, resolution);
 
   return await toCanvas(node, {
     cacheBust: true,
     width,
     height,
-    pixelRatio: EXPORT_PIXEL_RATIO,
+    pixelRatio: scale,
     skipFonts: true,
     filter: (domNode) => {
       if (domNode instanceof HTMLElement) {
@@ -241,13 +268,14 @@ async function captureCanvasWithHtmlToImage(node: HTMLElement) {
 async function captureCloneAsCanvas(
   node: HTMLElement,
   applyLayoutFallback: boolean,
+  resolution?: ImageExportResolution,
 ) {
   const {clone, dispose} = createSanitizedClone(node, applyLayoutFallback);
 
   try {
     applySharpBorderExportFix(clone);
     applyExportVisualFixes(clone);
-    return await captureCanvasWithHtmlToImage(clone);
+    return await captureCanvasWithHtmlToImage(clone, resolution);
   } finally {
     dispose();
   }
@@ -269,9 +297,10 @@ export default async function exportAsImage(
     const format = options?.format ?? "png";
     const mimeType = getMimeType(format);
     const quality = getFormatQuality(format);
+    const resolution = options?.resolution ?? "auto";
     const filename = options?.filename ?? `snippet.${format}`;
     try {
-      const canvas = await captureCloneAsCanvas(node, false);
+      const canvas = await captureCloneAsCanvas(node, false, resolution);
       const blob = await canvasToBlob(
         canvas,
         mimeType,
@@ -284,7 +313,7 @@ export default async function exportAsImage(
       const useLayoutFallback = shouldUseLayoutFallback(node);
       if (useLayoutFallback) {
         try {
-          const canvas = await captureCloneAsCanvas(node, true);
+          const canvas = await captureCloneAsCanvas(node, true, resolution);
           const blob = await canvasToBlob(
             canvas,
             mimeType,
@@ -294,7 +323,7 @@ export default async function exportAsImage(
           onSuccess?.();
           return;
         } catch {
-          const canvas = await captureCanvas(node);
+          const canvas = await captureCanvas(node, resolution);
           const blob = await canvasToBlob(
             canvas,
             mimeType,
@@ -306,7 +335,7 @@ export default async function exportAsImage(
         }
       }
 
-      const canvas = await captureCanvas(node);
+      const canvas = await captureCanvas(node, resolution);
       const blob = await canvasToBlob(
         canvas,
         mimeType,

@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
         url: targetUrl.href,
         deviceType: "desktop",
         colorScheme: "light",
-        forceRefresh: false,
+        forceRefresh: true,
       }),
     });
 
